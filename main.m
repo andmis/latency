@@ -58,12 +58,12 @@ struct Command {
   .numKeystrokes = LEN(NAME), \
   .keystrokes = NAME }
 
-Keystrokes pressX = {
+Keystrokes typeLetterX = {
   { .keyCode = kVK_ANSI_X,
-    .modifiers = NO_MODIFIERS },
+    .modifiers = SHIFT },
 };
 
-Keystrokes pressBackspace = {
+Keystrokes backspace = {
   { .keyCode = kVK_Delete,
     .modifiers = NO_MODIFIERS },
 };
@@ -82,19 +82,19 @@ Keystrokes vimCloseWindow = {
     .modifiers = NO_MODIFIERS },
 };
 
-/*
-// Type in an x, and then delete it.
+// Type in an X, and then delete it.
 struct Command commands[] = {
-  COMMAND(pressX),
-  COMMAND(pressBackspace),
+  COMMAND(typeLetterX),
+  COMMAND(backspace),
 };
-*/
 
+/*
 // Open and close a Vim split. Position the cursor over where the dividing status bar appears.
 struct Command commands[] = {
   COMMAND(vimHorizontalSplit),
   COMMAND(vimCloseWindow),
 };
+*/
 
 struct Color { float r, g, b; };
 
