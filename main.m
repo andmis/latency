@@ -113,14 +113,14 @@ const int kSleepTime_usec = 1000;
 
 void down(CGKeyCode keyCode) {
   // NSLog(@"Down: %d", keyCode);
+  usleep(kSleepTime_usec); // Conceptually we want to sleep a tiny bit between every pair of simulated key events because if we generate them too close together some stuff gets messed up. We sleep _before_ posting the event rather than after because after we post the last event of a command, the program whose latency we are measuring receives the event and begins working, so we want to start the clock as quickly after posting that last event as we can, and we start our clock after execute() returns.
   CGEventPost(kCGHIDEventTap, CGEventCreateKeyboardEvent(kEventSource, keyCode, true));
-  usleep(kSleepTime_usec);
 }
 
 void up(CGKeyCode keyCode) {
   // NSLog(@"Up: %d", keyCode);
-  CGEventPost(kCGHIDEventTap, CGEventCreateKeyboardEvent(kEventSource, keyCode, false));
   usleep(kSleepTime_usec);
+  CGEventPost(kCGHIDEventTap, CGEventCreateKeyboardEvent(kEventSource, keyCode, false));
 }
 
 void strike(struct Keystroke *keystroke) {
