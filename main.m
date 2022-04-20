@@ -142,18 +142,41 @@ void execute(struct Command *command) {
   }
 }
 
+int read_int(int argc, const char *argv[], int i) {
+  if (!(0 <= i && i < argc)) {
+    fprintf(stderr, "Error: argument required\n");
+    exit(-1);
+  }
+  int val;
+  int ret = sscanf(argv[i], "%d", &val);
+  if (ret != 1) {
+    fprintf(stderr, "Error: integer argument required\n");
+    exit(-2);
+  }
+  return val;
+}
+
 int main(int argc, const char *argv[]) {
+  int skip = 0; // Number of cycles to skip when printing. Useful when getting things set up at the beginning of a test run.
+  int cycles = -1; // Number of cycles to run in all, after the skipped cycles. Every command will be executed this many times. Negative means to run forever.
+
+  for (int i = 1; i < argc; ++i) {
+    if (!strcmp(argv[i], "--skip")) skip = read_int(argc, argv, ++i);
+    if (!strcmp(argv[i], "--cycles")) cycles = read_int(argc, argv, ++i);
+  }
+
   kMainDisplayID = CGMainDisplayID();
   kEventSource = CGEventSourceCreate(kCGEventSourceStateHIDSystemState);
   // NSLog(@"Main display id=%d", kMainDisplayID);
 
   // We cycle through the commands, executing the next one every time the color under the cursor changes.
+  int cycle = 1;
   int index = 0;
   struct Color lastColor = {.r = -1, .g = -1, .b = -1};
   struct timespec start;
   clock_gettime(CLOCK_MONOTONIC, &start);
 
-  while (true) {
+  while (cycles < 0 || cycle <= skip + cycles) {
     @autoreleasepool {
       CGPoint cursor = CGEventGetLocation(CGEventCreate(NULL));
       // NSLog(@"Mouse pos: (%f, %f)", cursor.x, cursor.y);
@@ -172,10 +195,16 @@ int main(int argc, const char *argv[]) {
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC, &now);
         unsigned usec = 1e6*(now.tv_sec-start.tv_sec) + (int)(1e-3*(now.tv_nsec-start.tv_nsec));
-        printf("%s %ld\n", commands[index].name, lround((float)usec/1e3));
+        if (cycle > skip) {
+          printf("%s %ld\n", commands[index].name, lround((float)usec/1e3));
+        }
         fflush(stdout);
         execute(&commands[index]);
-        index = (index+1) % LEN(commands);
+        index++;
+        if (index == LEN(commands)) {
+          index = 0;
+          cycle++;
+        }
         clock_gettime(CLOCK_MONOTONIC, &start);
       }
       lastColor = color;
