@@ -159,10 +159,12 @@ int read_int(int argc, const char *argv[], int i) {
 int main(int argc, const char *argv[]) {
   int skip = 0; // Number of cycles to skip when printing. Useful when getting things set up at the beginning of a test run.
   int cycles = -1; // Number of cycles to run in all, after the skipped cycles. Every command will be executed this many times. Negative means to run forever.
+  bool baseline = false; // Don't send any keyboard commands, just poll the pixel under the cursor to establish how many milliseconds that takes.
 
   for (int i = 1; i < argc; ++i) {
     if (!strcmp(argv[i], "--skip")) skip = read_int(argc, argv, ++i);
     if (!strcmp(argv[i], "--cycles")) cycles = read_int(argc, argv, ++i);
+    if (!strcmp(argv[i], "--baseline")) baseline = true;
   }
 
   kMainDisplayID = CGMainDisplayID();
@@ -191,17 +193,18 @@ int main(int argc, const char *argv[]) {
         .g = [nsColor greenComponent],
         .b = [nsColor blueComponent]
       };
-      if (!same(lastColor, color)) {
+      if (baseline || !same(lastColor, color)) {
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC, &now);
         unsigned usec = 1e6*(now.tv_sec-start.tv_sec) + (int)(1e-3*(now.tv_nsec-start.tv_nsec));
         if (cycle > skip) {
-          printf("%s %ld\n", commands[index].name, lround((float)usec/1e3));
+          const char *name = baseline ? "baseline" : commands[index].name;
+          printf("%s %.2f\n", name, (float)usec/1e3);
         }
         fflush(stdout);
-        execute(&commands[index]);
+        if (!baseline) execute(&commands[index]);
         index++;
-        if (index == LEN(commands)) {
+        if (baseline || index == LEN(commands)) {
           index = 0;
           cycle++;
         }
