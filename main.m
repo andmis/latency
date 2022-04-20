@@ -173,6 +173,7 @@ int main(int argc, const char *argv[]) {
         clock_gettime(CLOCK_MONOTONIC, &now);
         unsigned usec = 1e6*(now.tv_sec-start.tv_sec) + (int)(1e-3*(now.tv_nsec-start.tv_nsec));
         printf("%s %ld\n", commands[index].name, lround((float)usec/1e3));
+        fflush(stdout);
         execute(&commands[index]);
         index = (index+1) % LEN(commands);
         clock_gettime(CLOCK_MONOTONIC, &start);
