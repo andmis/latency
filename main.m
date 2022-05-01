@@ -198,6 +198,7 @@ int main(int argc, const char *argv[]) {
         .b = [nsColor blueComponent]
       };
       if (baseline || !same(lastColor, color)) {
+        // print_color(color);
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC, &now);
         unsigned usec = 1e6*(now.tv_sec-start.tv_sec) + (int)(1e-3*(now.tv_nsec-start.tv_nsec));
