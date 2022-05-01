@@ -105,6 +105,10 @@ bool same(struct Color c1, struct Color c2) {
   return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
 }
 
+void print_color(struct Color c) {
+  printf("r=%f, g=%f, b=%f\n", c.r, c.g, c.b);
+}
+
 CGDirectDisplayID kMainDisplayID;
 CGEventSourceRef kEventSource;
 
