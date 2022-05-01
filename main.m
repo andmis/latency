@@ -101,8 +101,10 @@ struct Command commands[] = {
 
 struct Color { float r, g, b; };
 
-bool same(struct Color c1, struct Color c2) {
-  return c1.r == c2.r && c1.g == c2.g && c1.b == c2.b;
+bool almost_same(struct Color c1, struct Color c2) {
+  // XXX: https://github.com/vercel/hyper/issues/6509
+  float manhattan_dist = fabs(c1.r-c2.r) + fabs(c1.g-c2.g) + fabs(c1.b-c2.b);
+  return manhattan_dist < 5. / 255;
 }
 
 void print_color(struct Color c) {
@@ -197,7 +199,7 @@ int main(int argc, const char *argv[]) {
         .g = [nsColor greenComponent],
         .b = [nsColor blueComponent]
       };
-      if (baseline || !same(lastColor, color)) {
+      if (baseline || !almost_same(lastColor, color)) {
         // print_color(color);
         struct timespec now;
         clock_gettime(CLOCK_MONOTONIC, &now);
