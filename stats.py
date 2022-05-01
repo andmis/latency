@@ -25,24 +25,25 @@ def row_data(name, latencies):
 
 
 def main():
-  max_commands = 100
-  print_frequency = 20
-  latency = defaultdict(lambda: deque(maxlen=max_commands))
-  def print_summary():
-    return tabulate([
+  num_commands_in_rolling_window = 1000
+  print_frequency = 200
+  latency = defaultdict(lambda: deque(maxlen=num_commands_in_rolling_window))
+  def print_summary(commands_seen):
+    print(f'{commands_seen=}')
+    tabulate([
       ['NAME', 'MIN', 'MEAN', 'MAX'],
       *(row_data(command_name, latency[command_name])
         for command_name in sorted(latency.keys()))
     ])
   try:
-    iteration = 1
+    commands_seen = 1
     while True:
       command_name, ms = input().split()
       ms = float(ms)
       latency[command_name].append(ms)
-      if iteration % print_frequency == 0:
-        print_summary()
-      iteration += 1
+      if commands_seen % print_frequency == 0:
+        print_summary(commands_seen)
+      commands_seen += 1
   except EOFError:
     print('Done!')
 
