@@ -6,7 +6,6 @@ This is a simple command-line tool for measuring the input latency of graphical 
 
 ``` bash
 clang -framework Foundation -framework Cocoa main.m
-./a.out
 ```
 
 ## Running
