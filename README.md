@@ -20,6 +20,31 @@ Basic usage:
 - Focus the app whose latency you would like to measure.
 - Put the mouse cursor under the keyboard cursor. Play around with the mouse cursor position until the keystroke-measurement-keystroke-measurement cycle kicks in.
 
+## Example output
+
+```
+repos/latency$ ./a.out --skip 100 | ./stats.py
+commands_seen=200
+NAME        | MIN   | MEAN  | MAX
+backspace   | 11.04 | 11.76 | 24.17
+typeLetterX | 10.02 | 14.3  | 26.29
+
+commands_seen=400
+NAME        | MIN   | MEAN  | MAX
+backspace   | 10.37 | 12.16 | 28.49
+typeLetterX | 5.91  | 14.31 | 26.41
+
+commands_seen=600
+NAME        | MIN  | MEAN  | MAX
+backspace   | 6.9  | 12.18 | 28.49
+typeLetterX | 5.91 | 14.33 | 26.41
+
+commands_seen=800
+NAME        | MIN  | MEAN  | MAX
+backspace   | 6.9  | 12.18 | 28.49
+typeLetterX | 5.47 | 14.3  | 26.41
+```
+
 ## Configuring
 
 You can customize the generated key sequence using the `commands` variable in `main.m`. Look there for examples.
